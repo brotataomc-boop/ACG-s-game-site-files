@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subway Surfers Launcher</title>
+    <style>
+        body { background: #222; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .container { text-align: center; background: #333; padding: 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { margin-bottom: 30px; font-size: 28px; color: #f1c40f; }
+        button { padding: 15px 40px; font-size: 20px; cursor: pointer; background: #f1c40f; color: #333; border: none; border-radius: 50px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); }
+        button:hover { background: #f39c12; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(241, 196, 15, 0.5); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Subway Surfers: Barcelona</h1>
+        <button onclick="launchSubway()">Launch in about:blank</button>
+    </div>
+
+    <script>
+        function launchSubway() {
+            // Your Subway Surfers code with escaped characters
+            const gameCode = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <base href="https://cdn.jsdelivr.net/gh/bubbls/subwaysurfersmerge/">
+    <title>Subway Surfers: Barcelona</title>
+    <link rel="icon" href="img/FirstAvatar.png">
+    <script src="4399.ss.js"><\/script>
+    <script>
+        window.config = {
+            loader: "unity",
+            debug: false,
+            maxRatio: 16 / 9,
+            minRatio: 9 / 16,
+            title: 'Subway Surfers: Barcelona',
+            unityVersion: '2019.2.0f1',
+            unityWebglBuildUrl: 'Barcelona.json',
+            fileSize: 26,
+            cachedDecompressedFileSizes: {
+                'Barcelona.wasm.framework.unityweb': 537217,
+                'Barcelona.wasm.code.unityweb': 26475054,
+                'Barcelona.data.unityweb': 26686614,
+            },
+        };
+
+        window.mergedBlobUrls = {};
+        window.assetsReady = false;
+
+        async function mergeSplitFile(fileUrlBase, numParts = 2) {
+            const partUrls = Array.from({ length: numParts }, (_, i) => 
+                \`\${fileUrlBase}.part\${i + 1}\`
+            );
+
+            try {
+                const responses = await Promise.all(partUrls.map(url => fetch(url)));
+                if (responses.some(r => !r.ok)) return null;
+                const parts = await Promise.all(responses.map(r => r.arrayBuffer()));
+                return URL.createObjectURL(new Blob(parts, { type: 'application/octet-stream' }));
+            } catch (error) { return null; }
+        }
+
+        function setupXHRInterceptor() {
+            if (window.xhrInterceptorInstalled) return;
+            const originalOpen = XMLHttpRequest.prototype.open;
+            const originalSend = XMLHttpRequest.prototype.send;
+
+            XMLHttpRequest.prototype.open = function(method, url, ...args) {
+                this._url = url;
+                let finalUrl = url;
+                for (const [filename, blobUrl] of Object.entries(window.mergedBlobUrls)) {
+                    if (url.includes(filename)) { finalUrl = blobUrl; break; }
+                }
+                return originalOpen.call(this, method, finalUrl, ...args);
+            };
+
+            XMLHttpRequest.prototype.send = function(...args) {
+                const xhr = this;
+                if (!window.assetsReady) {
+                    const checkReady = setInterval(() => { 
+                        if (window.assetsReady) { clearInterval(checkReady); originalSend.apply(xhr, args); }
+                    }, 50);
+                    return;
+                }
+                return originalSend.apply(this, args);
+            };
+            window.xhrInterceptorInstalled = true;
+        }
+
+        async function prepareGameAssets() {
+            try {
+                window.assetsReady = false;
+                setupXHRInterceptor();
+                const filesToMerge = ['Barcelona.data.unityweb', 'Barcelona.wasm.code.unityweb'];
+                for (const filename of filesToMerge) {
+                    const blobUrl = await mergeSplitFile(filename, 2);
+                    if (blobUrl) window.mergedBlobUrls[filename] = blobUrl;
+                }
+                window.assetsReady = true;
+            } catch (error) { window.assetsReady = true; }
+        }
+        prepareGameAssets();
+    <\/script>
+</head>
+<body>
+    <script src="master-loader.js"><\/script>
+</body>
+</html>`;
+
+            // Create Blob and Open
+            const blob = new Blob([gameCode], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+            const win = window.open('about:blank', '_blank');
+            
+            if (win) {
+                win.location.href = blobUrl;
+            } else {
+                alert("Pop-up blocked! Please enable pop-ups.");
+            }
+        }
+    </script>
+</body>
+</html>
