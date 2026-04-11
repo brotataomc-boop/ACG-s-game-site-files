@@ -109,18 +109,18 @@
             var statusEl = document.getElementById('status');
             statusEl.textContent = 'Loading game...';
             try {
+                var win = window.open('about:blank', '_blank');
+                if (!win) {
+                    statusEl.textContent = 'Pop-up blocked! Please allow pop-ups to launch games.';
+                    return;
+                }
                 var response = await fetch(file);
                 if (!response.ok) throw new Error('Failed to load game');
                 var html = await response.text();
                 var blob = new Blob([html], { type: 'text/html' });
                 var blobUrl = URL.createObjectURL(blob);
-                var win = window.open('about:blank', '_blank');
-                if (win) {
-                    win.location.href = blobUrl;
-                    statusEl.textContent = '';
-                } else {
-                    statusEl.textContent = 'Pop-up blocked! Please allow pop-ups to launch games.';
-                }
+                win.location.href = blobUrl;
+                statusEl.textContent = '';
             } catch (err) {
                 statusEl.textContent = 'Error loading game: ' + err.message;
             }
