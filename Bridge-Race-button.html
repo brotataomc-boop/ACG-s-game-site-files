@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bridge Race Launcher</title>
+    <style>
+        body {
+            background: #0a0a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+        .btn {
+            position: relative;
+            padding: 18px 50px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 35px rgba(255, 107, 53, 0.6);
+            background: linear-gradient(135deg, #ff8c42, #ffad33);
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 15px rgba(255, 107, 53, 0.3);
+        }
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glow"></div>
+        <h1>Bridge Race</h1>
+        <button class="btn" onclick="launchGame()">Play Now</button>
+    </div>
+
+    <script>
+        var GAME_B64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuLXVzIj4KCjxoZWFkPgogIDxiYXNlIGhyZWY9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9idWJibHMveW91dHViZS1wbGF5YWJsZXNAMjEzZDE5YWFkMWRiNWFjZGViZThlMDdhODBhZTQ5OThmMzE0NmUzMy9icmlkZ2UtcmFjZS8iPgogIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICA8bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCI+CiAgPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgogIDxtZXRhIGh0dHAtZXF1aXY9IlgtVUEtQ29tcGF0aWJsZSIgY29udGVudD0iaWU9ZWRnZSI+CgogIDx0aXRsZT5CcmlkZ2UgUmFjZTwvdGl0bGU+CiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJUZW1wbGF0ZURhdGEvc3R5bGUuY3NzIj4KICA8c2NyaXB0PgogICAgLy8gU3R1YiBvdXQgdGhlIFlvdVR1YmUgR2FtZSBTREsgc28gVW5pdHkgZG9lc24ndCBjcmFzaCB3aGVuIGl0CiAgICAvLyB0cmllcyB0byBjYWxsIFNESyBtZXRob2RzIG91dHNpZGUgdGhlIFlvdVR1YmUgaWZyYW1lIGNvbnRleHQuCiAgICB3aW5kb3cueXRnYW1lID0gewogICAgICBnYW1lOiB7CiAgICAgICAgZmlyc3RGcmFtZVJlYWR5OiBmdW5jdGlvbigpIHt9LAogICAgICAgIGdhbWVSZWFkeTogZnVuY3Rpb24oKSB7fSwKICAgICAgICBzZW5kU2NvcmU6IGZ1bmN0aW9uKCkgeyByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKCk7IH0sCiAgICAgICAgbG9hZERhdGE6IGZ1bmN0aW9uKCkgeyByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKG51bGwpOyB9LAogICAgICAgIHNhdmVEYXRhOiBmdW5jdGlvbigpIHsgcmV0dXJuIFByb21pc2UucmVzb2x2ZSgpOyB9LAogICAgICB9LAogICAgICBzeXN0ZW06IHsKICAgICAgICBpc0F1ZGlvRW5hYmxlZDogZnVuY3Rpb24oKSB7IHJldHVybiBQcm9taXNlLnJlc29sdmUodHJ1ZSk7IH0sCiAgICAgICAgb25BdWRpb0VuYWJsZWRDaGFuZ2U6IGZ1bmN0aW9uKCkge30sCiAgICAgICAgb25QYXVzZTogZnVuY3Rpb24oKSB7fSwKICAgICAgICBvblJlc3VtZTogZnVuY3Rpb24oKSB7fSwKICAgICAgICBnZXRMYW5ndWFnZTogZnVuY3Rpb24oKSB7IHJldHVybiBQcm9taXNlLnJlc29sdmUoImVuIik7IH0sCiAgICAgIH0sCiAgICAgIGFkczogewogICAgICAgIHJlcXVlc3RBZDogZnVuY3Rpb24oKSB7IHJldHVybiBQcm9taXNlLnJlc29sdmUoMCk7IH0sCiAgICAgIH0sCiAgICAgIElOX1BMQVlBQkxFU19FTlY6IGZhbHNlLAogICAgICBTREtfVkVSU0lPTjogInN0dWIiLAogICAgfTsKICA8L3NjcmlwdD4KICA8c3R5bGU+CiAgICBib2R5LCBodG1sIHsKICAgICAgbWFyZ2luOiAwOwogICAgICBwYWRkaW5nOiAwOwogICAgICB3aWR0aDogMTAwJTsKICAgICAgaGVpZ2h0OiAxMDAlOwogICAgICBvdmVyZmxvdzogaGlkZGVuOwogICAgICBiYWNrZ3JvdW5kOiAjMjMxRjIwOwogICAgfQogICAgI3VuaXR5LWNvbnRhaW5lciB7CiAgICAgIHdpZHRoOiAxMDAlOwogICAgICBoZWlnaHQ6IDEwMCU7CiAgICB9CiAgICAjdW5pdHktY2FudmFzIHsKICAgICAgd2lkdGg6IDEwMCU7CiAgICAgIGhlaWdodDogMTAwJTsKICAgICAgZGlzcGxheTogYmxvY2s7CiAgICB9CiAgICAjdW5pdHktbG9hZGluZy1iYXIgewogICAgICBwb3NpdGlvbjogYWJzb2x1dGU7CiAgICAgIGxlZnQ6IDUwJTsKICAgICAgdG9wOiA1MCU7CiAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpOwogICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7CiAgICB9CiAgICAjdW5pdHktcHJvZ3Jlc3MtYmFyLWVtcHR5IHsKICAgICAgd2lkdGg6IDIwMHB4OwogICAgICBoZWlnaHQ6IDEwcHg7CiAgICAgIGJhY2tncm91bmQ6ICM1NTU7CiAgICAgIGJvcmRlci1yYWRpdXM6IDVweDsKICAgICAgbWFyZ2luLXRvcDogMTBweDsKICAgIH0KICAgICN1bml0eS1wcm9ncmVzcy1iYXItZnVsbCB7CiAgICAgIHdpZHRoOiAwJTsKICAgICAgaGVpZ2h0OiAxMDAlOwogICAgICBiYWNrZ3JvdW5kOiAjNENBRjUwOwogICAgICBib3JkZXItcmFkaXVzOiA1cHg7CiAgICAgIHRyYW5zaXRpb246IHdpZHRoIDAuMnM7CiAgICB9CiAgICAjbG9hZC1zdGF0dXMgewogICAgICBjb2xvcjogI2FhYTsKICAgICAgZm9udC1mYW1pbHk6IHNhbnMtc2VyaWY7CiAgICAgIGZvbnQtc2l6ZTogMTRweDsKICAgICAgbWFyZ2luLXRvcDogMTBweDsKICAgIH0KICA8L3N0eWxlPgo8L2hlYWQ+Cgo8Ym9keT4KICA8c2NyaXB0IHNyYz0idW5hcmNoaXZlci5taW4uanMiPjwvc2NyaXB0PgogIDxkaXYgaWQ9InVuaXR5LWNvbnRhaW5lciIgY2xhc3M9InVuaXR5LWRlc2t0b3AiPgogICAgPGNhbnZhcyBpZD0idW5pdHktY2FudmFzIiB0YWJpbmRleD0iLTEiPjwvY2FudmFzPgogICAgPGRpdiBpZD0idW5pdHktbG9hZGluZy1iYXIiPgogICAgICA8ZGl2IGlkPSJ1bml0eS1wcm9ncmVzcy1iYXItZW1wdHkiPgogICAgICAgIDxkaXYgaWQ9InVuaXR5LXByb2dyZXNzLWJhci1mdWxsIj48L2Rpdj4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgaWQ9ImxvYWQtc3RhdHVzIj5Mb2FkaW5nIEJyaWRnZSBSYWNlLi4uPC9kaXY+CiAgICA8L2Rpdj4KICAgIDxkaXYgaWQ9InVuaXR5LXdhcm5pbmciPjwvZGl2PgogIDwvZGl2PgoKICA8c2NyaXB0PgogICAgdmFyIGNvbnRhaW5lciA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiN1bml0eS1jb250YWluZXIiKTsKICAgIHZhciBjYW52YXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjdW5pdHktY2FudmFzIik7CiAgICB2YXIgbG9hZGluZ0JhciA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiN1bml0eS1sb2FkaW5nLWJhciIpOwogICAgdmFyIHByb2dyZXNzQmFyRnVsbCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiN1bml0eS1wcm9ncmVzcy1iYXItZnVsbCIpOwogICAgdmFyIGxvYWRTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjbG9hZC1zdGF0dXMiKTsKCiAgICBmdW5jdGlvbiB1bml0eVNob3dCYW5uZXIobXNnLCB0eXBlKSB7CiAgICAgIGNvbnNvbGUud2FybigiVW5pdHkgYmFubmVyOiIsIHR5cGUsIG1zZyk7CiAgICB9CgogICAgdmFyIGJ1aWxkVXJsID0gIkJ1aWxkIjsKICAgIHZhciBsb2FkZXJVcmwgPSBidWlsZFVybCArICIvQnJpZGdlUmFjZS5sb2FkZXIuanMiOwogICAgdmFyIGNvbmZpZyA9IHsKICAgICAgZGF0YVVybDogYnVpbGRVcmwgKyAiL0JyaWRnZVJhY2UuZGF0YS51bml0eXdlYiIsCiAgICAgIGZyYW1ld29ya1VybDogYnVpbGRVcmwgKyAiL0JyaWRnZVJhY2UuZnJhbWV3b3JrLmpzLnVuaXR5d2ViIiwKICAgICAgY29kZVVybDogYnVpbGRVcmwgKyAiL0JyaWRnZVJhY2Uud2FzbS51bml0eXdlYiIsCiAgICAgIHN0cmVhbWluZ0Fzc2V0c1VybDogIlN0cmVhbWluZ0Fzc2V0cyIsCiAgICAgIGNvbXBhbnlOYW1lOiAiR2FyYXdlbGwiLAogICAgICBwcm9kdWN0TmFtZTogIkJyaWRnZSBSYWNlIiwKICAgICAgcHJvZHVjdFZlcnNpb246ICIzLjIxIiwKICAgICAgc2hvd0Jhbm5lcjogdW5pdHlTaG93QmFubmVyLAogICAgfTsKCiAgICBpZiAoL2lQaG9uZXxpUGFkfGlQb2R8QW5kcm9pZC9pLnRlc3QobmF2aWdhdG9yLnVzZXJBZ2VudCkpIHsKICAgICAgdmFyIG1ldGEgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdtZXRhJyk7CiAgICAgIG1ldGEubmFtZSA9ICd2aWV3cG9ydCc7CiAgICAgIG1ldGEuY29udGVudCA9ICd3aWR0aD1kZXZpY2Utd2lkdGgsIGhlaWdodD1kZXZpY2UtaGVpZ2h0LCBpbml0aWFsLXNjYWxlPTEuMCwgdXNlci1zY2FsYWJsZT1ubywgc2hyaW5rLXRvLWZpdD15ZXMnOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50c0J5VGFnTmFtZSgnaGVhZCcpWzBdLmFwcGVuZENoaWxkKG1ldGEpOwogICAgICBjb250YWluZXIuY2xhc3NOYW1lID0gInVuaXR5LW1vYmlsZSI7CiAgICAgIGNhbnZhcy5jbGFzc05hbWUgPSAidW5pdHktbW9iaWxlIjsKICAgIH0gZWxzZSB7CiAgICAgIGNhbnZhcy5zdHlsZS53aWR0aCA9ICIxMDAlIjsKICAgICAgY2FudmFzLnN0eWxlLmhlaWdodCA9ICIxMDAlIjsKICAgIH0KCiAgICBsb2FkaW5nQmFyLnN0eWxlLmRpc3BsYXkgPSAiYmxvY2siOwoKICAgIHZhciBzY3JpcHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJzY3JpcHQiKTsKICAgIHNjcmlwdC5zcmMgPSBsb2FkZXJVcmw7CiAgICBzY3JpcHQub25lcnJvciA9IGZ1bmN0aW9uKCkgewogICAgICBsb2FkU3RhdHVzLnRleHRDb250ZW50ID0gIkZhaWxlZCB0byBsb2FkIGdhbWUgZW5naW5lLiBDaGVjayB5b3VyIGNvbm5lY3Rpb24uIjsKICAgICAgbG9hZFN0YXR1cy5zdHlsZS5jb2xvciA9ICIjZTc0YzNjIjsKICAgIH07CiAgICBzY3JpcHQub25sb2FkID0gZnVuY3Rpb24oKSB7CiAgICAgIGxvYWRTdGF0dXMudGV4dENvbnRlbnQgPSAiU3RhcnRpbmcgZ2FtZSBlbmdpbmUuLi4iOwogICAgICBjcmVhdGVVbml0eUluc3RhbmNlKGNhbnZhcywgY29uZmlnLCBmdW5jdGlvbihwcm9ncmVzcykgewogICAgICAgIHByb2dyZXNzQmFyRnVsbC5zdHlsZS53aWR0aCA9ICgxMDAgKiBwcm9ncmVzcykgKyAiJSI7CiAgICAgICAgaWYgKHByb2dyZXNzIDwgMSkgewogICAgICAgICAgbG9hZFN0YXR1cy50ZXh0Q29udGVudCA9ICJMb2FkaW5nLi4uICIgKyBNYXRoLnJvdW5kKHByb2dyZXNzICogMTAwKSArICIlIjsKICAgICAgICB9CiAgICAgIH0pLnRoZW4oZnVuY3Rpb24odW5pdHlJbnN0YW5jZSkgewogICAgICAgIGxvYWRpbmdCYXIuc3R5bGUuZGlzcGxheSA9ICJub25lIjsKICAgICAgfSkuY2F0Y2goZnVuY3Rpb24obWVzc2FnZSkgewogICAgICAgIGxvYWRTdGF0dXMudGV4dENvbnRlbnQgPSAiRXJyb3I6ICIgKyBtZXNzYWdlOwogICAgICAgIGxvYWRTdGF0dXMuc3R5bGUuY29sb3IgPSAiI2U3NGMzYyI7CiAgICAgICAgY29uc29sZS5lcnJvcigiVW5pdHkgbG9hZCBlcnJvcjoiLCBtZXNzYWdlKTsKICAgICAgfSk7CiAgICB9OwogICAgZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZChzY3JpcHQpOwogIDwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4K";
+        function launchGame() {
+            var gameCode = atob(GAME_B64);
+            var blob = new Blob([gameCode], { type: 'text/html' });
+            var blobUrl = URL.createObjectURL(blob);
+            var win = window.open('about:blank', '_blank');
+            if (win) {
+                win.location.href = blobUrl;
+            } else {
+                alert('Pop-up blocked! Please allow pop-ups to launch the game.');
+            }
+        }
+    </script>
+</body>
+</html>
