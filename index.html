@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ACG's Game Site</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0f0f0f;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f1c40f, #e74c3c, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            width: 100%;
+        }
+        .card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+        }
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .play-btn {
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #000;
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+        .backrooms .play-btn { background: #fbbf24; }
+        .backrooms .play-btn:hover { background: #f59e0b; }
+        .baldi .play-btn { background: #4ade80; }
+        .baldi .play-btn:hover { background: #22c55e; }
+        .bouncemasters .play-btn { background: #60a5fa; }
+        .bouncemasters .play-btn:hover { background: #3b82f6; }
+        .subway .play-btn { background: #f1c40f; }
+        .subway .play-btn:hover { background: #f39c12; }
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ACG's Game Site</h1>
+    <div class="grid">
+        <div class="card backrooms" onclick="launchGame('Backrooms-button-html')">
+            <h2>The Backrooms</h2>
+            <button class="play-btn">Play</button>
+        </div>
+        <div class="card baldi" onclick="launchGame('Baldi-Remaster-index.html')">
+            <h2>Baldi's Basics Remastered</h2>
+            <button class="play-btn">Play</button>
+        </div>
+        <div class="card bouncemasters" onclick="launchGame('bouncemasters.html')">
+            <h2>Bouncemasters</h2>
+            <button class="play-btn">Play</button>
+        </div>
+        <div class="card subway" onclick="launchGame('Subway%20Surfers%20Barcelona')">
+            <h2>Subway Surfers: Barcelona</h2>
+            <button class="play-btn">Play</button>
+        </div>
+    </div>
+    <div class="status" id="status"></div>
+
+    <script>
+        async function launchGame(file) {
+            var statusEl = document.getElementById('status');
+            statusEl.textContent = 'Loading game...';
+            try {
+                var response = await fetch(file);
+                if (!response.ok) throw new Error('Failed to load game');
+                var html = await response.text();
+                var blob = new Blob([html], { type: 'text/html' });
+                var blobUrl = URL.createObjectURL(blob);
+                var win = window.open('about:blank', '_blank');
+                if (win) {
+                    win.location.href = blobUrl;
+                    statusEl.textContent = '';
+                } else {
+                    statusEl.textContent = 'Pop-up blocked! Please allow pop-ups to launch games.';
+                }
+            } catch (err) {
+                statusEl.textContent = 'Error loading game: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
