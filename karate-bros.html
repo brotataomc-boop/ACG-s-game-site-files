@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Karate Bros</title>
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="shortcut icon" type="image/png" href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/favicon.png">
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/KarateBros.js?th=23"></script>
+
+  <script>
+    // Prevent default touch/key behavior that interferes with game
+    window.addEventListener("touchmove", function(event) {
+      event.preventDefault();
+    }, { capture: false, passive: false });
+
+    if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
+      var meta = document.getElementById("viewport");
+      meta.setAttribute('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if ((e.keyCode == 32 || e.keyCode == 38 || e.keyCode == 40) && e.target == document.body) {
+        e.preventDefault();
+      }
+    });
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      color: orange;
+      overflow: hidden;
+    }
+    #openfl-content {
+      background: #000;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body style="overflow:hidden;">
+  <noscript>Enable JavaScript bro!</noscript>
+
+  <div id="loading" style="position: absolute; z-index: 15; top: 60%; left: 50%; transform: translate(-50%, 0); background: black;">
+    <center>
+      <img src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/assets/loading4.png"><br />
+      <img src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/assets/fbro.png">
+      <img src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/assets/sbro.png">
+      <img src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/assets/wbro.png">
+      <img src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ba0d3910bd7dde2f6171c57d658113f9df69dd77/karate%20bros/assets/bbro.png">
+    </center>
+  </div>
+
+  <div id="game2" style="width: 100%; height: 100%;">
+    <div id="openfl-content" onblur="window.focus();" style="width: 100%; float:left;">
+      <script type="text/javascript">
+        lime.embed("KarateBros", "openfl-content", 0, 0, { parameters: {} });
+      </script>
+    </div>
+    <div id="preroll" style="width: 960px; height: 540px; display: none; position: absolute; top: 50%; left: 50%; z-index: 100; transform: translate(-50%, -50%);"></div>
+  </div>
+
+  <script>
+    // Stub ad/video functions the game engine calls
+    function ShowVideo(theUnitName, forceaip) {
+      if (typeof Main !== 'undefined' && Main.DoneVideoAd) Main.DoneVideoAd();
+    }
+    function ShowAd1() {}
+    function ShowAd2() {}
+    function ShowAd3() {}
+    function ShowAd4() {}
+    function ShowAd6() {}
+    function ShowAd7() {}
+    function ShowAd8() {}
+    function ShowAd9() {}
+    function ShowAdBreak() {
+      if (typeof Main !== 'undefined' && Main.DoneInterstitialAd) Main.DoneInterstitialAd(true);
+    }
+    function LoadVideo() {}
+    function SendEvent() {}
+    function SetCGInviteLink() {}
+    function EmailSignup() {}
+    function GamePlayStart() {}
+    function GamePlayStop() {}
+    function HappyTime() {}
+
+    // Fullscreen toggle
+    function toggleFullScreen() {
+      if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+          (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if (document.documentElement.requestFullScreen) {
+          document.documentElement.requestFullScreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullScreen) {
+          document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        }
+      }
+    }
+  </script>
+
+  <input class="button" type="button" value="Fullscreen" onclick="toggleFullScreen()" style="position: absolute; bottom: 0; right: 0; float: right; clear: right;">
+</body>
+</html>
