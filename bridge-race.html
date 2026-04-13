@@ -2,14 +2,13 @@
 <html lang="en-us">
 
 <head>
-  <base href="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@213d19aad1db5acdebe8e07a80ae4998f3146e33/bridge-race/">
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <title>Bridge Race</title>
-  <link rel="stylesheet" href="TemplateData/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@213d19aad1db5acdebe8e07a80ae4998f3146e33/bridge-race/TemplateData/style.css">
   <script>
     // Stub out the YouTube Game SDK so Unity doesn't crash when it
     // tries to call SDK methods outside the YouTube iframe context.
@@ -84,7 +83,7 @@
 </head>
 
 <body>
-  <script src="unarchiver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@213d19aad1db5acdebe8e07a80ae4998f3146e33/bridge-race/unarchiver.min.js"></script>
   <div id="unity-container" class="unity-desktop">
     <canvas id="unity-canvas" tabindex="-1"></canvas>
     <div id="unity-loading-bar">
@@ -107,13 +106,14 @@
       console.warn("Unity banner:", type, msg);
     }
 
-    var buildUrl = "Build";
+    var cdnBase = "https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@213d19aad1db5acdebe8e07a80ae4998f3146e33/bridge-race/";
+    var buildUrl = cdnBase + "Build";
     var loaderUrl = buildUrl + "/BridgeRace.loader.js";
     var config = {
       dataUrl: buildUrl + "/BridgeRace.data.unityweb",
       frameworkUrl: buildUrl + "/BridgeRace.framework.js.unityweb",
       codeUrl: buildUrl + "/BridgeRace.wasm.unityweb",
-      streamingAssetsUrl: "StreamingAssets",
+      streamingAssetsUrl: cdnBase + "StreamingAssets",
       companyName: "Garawell",
       productName: "Bridge Race",
       productVersion: "3.21",
