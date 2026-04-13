@@ -122,7 +122,7 @@
     const DATA_URL = ASSETS_BASE + "/game.data";
     const FRAMEWORK_URL = ASSETS_BASE + "/framework.js";
     const WASM_URL = ASSETS_BASE + "/game.wasm";
-    const STREAMING_ASSETS_URL = "https://play-prod.struckd.com/api/v1/games/game/e1891b33-ffd0-4367-832e-b6f8d2951329/build/9ad94e73-597b-4581-ae5d-76b94d5403d8/streaming";
+    const STREAMING_ASSETS_URL = ASSETS_BASE + "/streaming";
 
     const container = document.querySelector("#unity-container");
     const canvas = document.querySelector("#unity-canvas");
@@ -193,7 +193,7 @@
       wasmFrameworkUrl: FRAMEWORK_URL,
       wasmCodeUrl: WASM_URL,
       streamingAssetsUrl: STREAMING_ASSETS_URL,
-      companyName: "play.unity.com",
+      companyName: "Struckd",
       productName: "Unity Play Project",
       ...legacyGameProperties
     };
