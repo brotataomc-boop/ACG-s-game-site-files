@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CaseOh's Basics Launcher</title>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0b0b1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-particles span {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 165, 0, 0.15);
+            animation: float 6s ease-in-out infinite;
+        }
+        .bg-particles span:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 15%; animation-delay: 0s; }
+        .bg-particles span:nth-child(2) { width: 50px; height: 50px; top: 60%; left: 75%; animation-delay: 1.5s; }
+        .bg-particles span:nth-child(3) { width: 120px; height: 120px; top: 80%; left: 25%; animation-delay: 3s; }
+        .bg-particles span:nth-child(4) { width: 40px; height: 40px; top: 30%; left: 85%; animation-delay: 0.8s; }
+        .bg-particles span:nth-child(5) { width: 65px; height: 65px; top: 50%; left: 45%; animation-delay: 2.2s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-30px) scale(1.15); opacity: 0.7; }
+        }
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ff8c00, #ffd700, #ff4500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+        .btn {
+            position: relative;
+            display: inline-block;
+            padding: 20px 55px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 8px 30px rgba(255, 106, 0, 0.4),
+                0 0 60px rgba(238, 9, 121, 0.15);
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.15) 50%,
+                transparent 70%
+            );
+            animation: sweep 3s ease-in-out infinite;
+        }
+        @keyframes sweep {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow:
+                0 12px 40px rgba(255, 106, 0, 0.6),
+                0 0 80px rgba(238, 9, 121, 0.3);
+            background: linear-gradient(135deg, #ff8c42, #ff1493);
+        }
+        .btn:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 15px rgba(255, 106, 0, 0.3);
+        }
+        .note {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="container">
+        <div class="glow-ring"></div>
+        <h1>CaseOh's Basics</h1>
+        <p class="subtitle">in Eating and Fast Food</p>
+        <button class="btn" onclick="launchGame()">Play Now</button>
+        <p class="note">Opens in a new tab</p>
+    </div>
+
+    <script>
+        function launchGame() {
+            var gameCode = [
+                '<!DOCTYPE html>',
+                '<html lang="en-us">',
+                '<head>',
+                '  <base href="https://cdn.jsdelivr.net/gh/bubbls/ports@latest/baldi-caseoh/">',
+                '  <meta charset="utf-8">',
+                '  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">',
+                '  <title>CaseOhs Basics in Eating and Fast Food</title>',
+                '  <link rel="shortcut icon" href="TemplateData/favicon.ico">',
+                '  <link rel="stylesheet" href="TemplateData/style.css">',
+                '  <script src="TemplateData/UnityProgress.js"><\/script>',
+                '  <script>',
+                '    window.fileMergerConfig = {',
+                '      files: [',
+                "        { name: 'web.data.unityweb', parts: 2 },",
+                "        { name: 'web.wasm.code.unityweb', parts: 2 },",
+                '      ],',
+                "      basePath: 'Build/',",
+                '      debug: true',
+                '    };',
+                '  <\/script>',
+                '  <script src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@main/merge.js"><\/script>',
+                '  <script src="Build/UnityLoader.js"><\/script>',
+                '  <script>',
+                '    var unityInstance = UnityLoader.instantiate("unityContainer", "Build/web.json", {onProgress: UnityProgress});',
+                '  <\/script>',
+                '  <style>',
+                '    * { margin: 0; padding: 0; box-sizing: border-box; }',
+                '    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }',
+                '    .webgl-content { width: 100%; height: 100%; }',
+                '    #unityContainer { width: 100% !important; height: 100% !important; }',
+                '  </style>',
+                '</head>',
+                '<body>',
+                '  <div class="webgl-content">',
+                '    <div id="unityContainer" style="width: 100%; height: 100%;"></div>',
+                '    <div class="footer">',
+                '      <div class="webgl-logo"></div>',
+                '      <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>',
+                '      <div class="title">CaseOhs Basics in Eating and Fast Food</div>',
+                '    </div>',
+                '  </div>',
+                '</body>',
+                '</html>'
+            ].join('\n');
+
+            var blob = new Blob([gameCode], { type: 'text/html' });
+            var blobUrl = URL.createObjectURL(blob);
+            var win = window.open('about:blank', '_blank');
+
+            if (win) {
+                win.location.href = blobUrl;
+            } else {
+                alert("Pop-up blocked! Please allow pop-ups for this site to launch the game.");
+            }
+        }
+    </script>
+</body>
+</html>
