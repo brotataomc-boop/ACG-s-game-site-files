@@ -115,12 +115,13 @@
   </script>
 
   <script>
-    // Game assets hosted on jsdelivr CDN (served from this GitHub repo)
-    const CDN_BASE = "https://cdn.jsdelivr.net/gh/brotataomc-boop/ACG-s-game-site-files@main/struckd-game-assets";
-    const LOADER_URL = CDN_BASE + "/loader.js";
-    const DATA_URL = CDN_BASE + "/game.data";
-    const FRAMEWORK_URL = CDN_BASE + "/framework.js";
-    const WASM_URL = CDN_BASE + "/game.wasm";
+    // Game assets path - uses relative path so it works from any web server
+    // The assets are in the struckd-game-assets/ folder next to this HTML file
+    const ASSETS_BASE = "struckd-game-assets";
+    const LOADER_URL = ASSETS_BASE + "/loader.js";
+    const DATA_URL = ASSETS_BASE + "/game.data";
+    const FRAMEWORK_URL = ASSETS_BASE + "/framework.js";
+    const WASM_URL = ASSETS_BASE + "/game.wasm";
     const STREAMING_ASSETS_URL = "https://play-prod.struckd.com/api/v1/games/game/e1891b33-ffd0-4367-832e-b6f8d2951329/build/9ad94e73-597b-4581-ae5d-76b94d5403d8/streaming";
 
     const container = document.querySelector("#unity-container");
