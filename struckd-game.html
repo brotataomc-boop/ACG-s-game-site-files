@@ -81,7 +81,7 @@
     <div id="progress-bar-container">
       <div id="progress-bar"></div>
     </div>
-    <p id="progress-text">Fetching game data...</p>
+    <p id="progress-text">Initializing...</p>
   </div>
 
   <div id="unity-container" class="unity-desktop">
@@ -115,9 +115,13 @@
   </script>
 
   <script>
-    // Struckd game ID - change this to load a different game
-    const GAME_ID = "e1891b33-ffd0-4367-832e-b6f8d2951329";
-    const FRAME_API_URL = "https://play-prod.struckd.com/api/v1/games/game/" + GAME_ID + "/build/latest/frame";
+    // Game assets hosted on jsdelivr CDN (served from this GitHub repo)
+    const CDN_BASE = "https://cdn.jsdelivr.net/gh/brotataomc-boop/ACG-s-game-site-files@main/struckd-game-assets";
+    const LOADER_URL = CDN_BASE + "/loader.js";
+    const DATA_URL = CDN_BASE + "/game.data";
+    const FRAMEWORK_URL = CDN_BASE + "/framework.js";
+    const WASM_URL = CDN_BASE + "/game.wasm";
+    const STREAMING_ASSETS_URL = "https://play-prod.struckd.com/api/v1/games/game/e1891b33-ffd0-4367-832e-b6f8d2951329/build/9ad94e73-597b-4581-ae5d-76b94d5403d8/streaming";
 
     const container = document.querySelector("#unity-container");
     const canvas = document.querySelector("#unity-canvas");
@@ -170,167 +174,66 @@
       });
     }
 
-    function patchUnityLoader(loaderSource) {
-      if (loaderSource.indexOf('e.wasmCodeUrl.endsWith(".unityweb")') !== -1) {
-        return loaderSource.replace(
-          'e.wasmCodeUrl.endsWith(".unityweb")',
-          '(e.wasmCodeUrl.endsWith(".unityweb") || true)'
-        );
-      }
-      return loaderSource;
-    }
+    // Game config using jsdelivr-hosted assets
+    const legacyGameProperties = {
+      productVersion: "1.0",
+      graphicsAPI: ["WebGL 1.0"],
+      webglContextAttributes: { preserveDrawingBuffer: false },
+      splashScreenStyle: "Dark",
+      backgroundColor: "#231F20",
+      developmentBuild: false,
+      multithreading: false,
+      unityVersion: "2019.3.15f1",
+      Module: { splashScreenStyle: "Dark", preRun: [] }
+    };
 
-    // Parse the frame HTML to extract the game config and loader URL
-    function parseFrameHTML(html) {
-      const formatMatch = html.match(/const bundleFormat\s*=\s*"(\d+)"/);
-      const bundleFormat = formatMatch ? formatMatch[1] : "2";
+    const config = {
+      dataUrl: DATA_URL,
+      wasmFrameworkUrl: FRAMEWORK_URL,
+      wasmCodeUrl: WASM_URL,
+      streamingAssetsUrl: STREAMING_ASSETS_URL,
+      companyName: "play.unity.com",
+      productName: "Unity Play Project",
+      ...legacyGameProperties
+    };
 
-      const loaderMatch = html.match(/loaderUrl\s*=\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+)"/);
-      const loaderUrl = loaderMatch ? loaderMatch[1] : null;
-
-      let config = {};
-
-      if (bundleFormat === "1" || bundleFormat === "2") {
-        const dataMatch = html.match(/dataUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+game\.data[^"]*)"/);
-        const frameworkMatch = html.match(/wasmFrameworkUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+framework\.js[^"]*)"/);
-        const wasmMatch = html.match(/wasmCodeUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+game\.wasm[^"]*)"/);
-        const streamMatch = html.match(/streamingAssetsUrl:\s*"(https:\/\/[^"]+streaming[^"]*)"/);
-
-        config = {
-          dataUrl: dataMatch ? dataMatch[1] : null,
-          wasmFrameworkUrl: frameworkMatch ? frameworkMatch[1] : null,
-          wasmCodeUrl: wasmMatch ? wasmMatch[1] : null,
-          streamingAssetsUrl: streamMatch ? streamMatch[1] : null,
-        };
-      } else {
-        const dataMatch = html.match(/dataUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+game\.data[^"]*)"/);
-        const frameworkMatch = html.match(/frameworkUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+framework\.js[^"]*)"/);
-        const codeMatch = html.match(/codeUrl:\s*"(https:\/\/cdn\.play\.unity\.com\/[^"]+game\.wasm[^"]*)"/);
-        const streamMatch = html.match(/streamingAssetsUrl:\s*"(https:\/\/[^"]+streaming[^"]*)"/);
-
-        config = {
-          dataUrl: dataMatch ? dataMatch[1] : null,
-          frameworkUrl: frameworkMatch ? frameworkMatch[1] : null,
-          codeUrl: codeMatch ? codeMatch[1] : null,
-          streamingAssetsUrl: streamMatch ? streamMatch[1] : null,
-        };
-      }
-
-      const versionMatch = html.match(/unityVersion:\s*"([^"]+)"/);
-      const unityVersion = versionMatch ? versionMatch[1] : "2019.3.15f1";
-
-      return { bundleFormat, loaderUrl, config, unityVersion };
-    }
+    const encodedConfig = JSON.stringify(config);
+    const configBlob = new Blob([encodedConfig], { type: "application/json" });
+    const configBlobUrl = URL.createObjectURL(configBlob);
 
     async function startGame() {
       try {
-        // Step 1: Fetch the frame HTML from the Struckd API to get fresh signed URLs
-        progressText.textContent = "Fetching game configuration...";
-        console.log("Fetching frame from:", FRAME_API_URL);
-
-        const frameResponse = await fetch(FRAME_API_URL);
-        if (!frameResponse.ok) {
-          throw new Error("Failed to fetch game frame: " + frameResponse.status);
-        }
-        const frameHTML = await frameResponse.text();
-
-        // Step 2: Parse out config and URLs
-        progressText.textContent = "Parsing game configuration...";
-        const parsed = parseFrameHTML(frameHTML);
-        console.log("Parsed config:", parsed);
-
-        if (!parsed.loaderUrl) {
-          throw new Error("Could not extract loader URL from frame");
-        }
-        if (!parsed.config.dataUrl) {
-          throw new Error("Could not extract game data URL from frame");
-        }
-
-        // Step 3: Build the full config with legacy properties
-        const legacyGameProperties = {
-          productVersion: "1.0",
-          graphicsAPI: ["WebGL 1.0"],
-          webglContextAttributes: { preserveDrawingBuffer: false },
-          splashScreenStyle: "Dark",
-          backgroundColor: "#231F20",
-          developmentBuild: false,
-          multithreading: false,
-          unityVersion: parsed.unityVersion,
-          Module: { splashScreenStyle: "Dark", preRun: [] }
-        };
-
-        const gameConfig = {
-          ...parsed.config,
-          companyName: "play.unity.com",
-          productName: "Unity Play Project",
-          ...legacyGameProperties
-        };
-
-        const encodedConfig = JSON.stringify(gameConfig);
-        const configBlob = new Blob([encodedConfig], { type: "application/json" });
-        const configBlobUrl = URL.createObjectURL(configBlob);
-
-        // Step 4: Fetch, patch, and load the Unity loader
+        // Load the Unity loader (already patched for compression compatibility)
         progressText.textContent = "Loading Unity engine...";
-        console.log("Fetching Unity loader...");
-        const loaderResponse = await fetch(parsed.loaderUrl);
-        const loaderSource = await loaderResponse.text();
-        const patchedSource = patchUnityLoader(loaderSource);
-        const patchedBlob = new Blob([patchedSource], { type: "application/javascript" });
-        const patchedUrl = URL.createObjectURL(patchedBlob);
+        console.log("Loading Unity loader from:", LOADER_URL);
+        await loadScript(LOADER_URL);
 
-        await loadScript(patchedUrl);
-
-        // Step 5: Instantiate the game
+        // Instantiate the game using UnityLoader (bundleFormat "2")
         progressText.textContent = "Starting game...";
-        console.log("Instantiating game with bundleFormat:", parsed.bundleFormat);
+        console.log("Instantiating game...");
 
-        if (parsed.bundleFormat === "1" || parsed.bundleFormat === "2") {
-          UnityLoader.instantiate("unity-container", configBlobUrl, {
-            onProgress: (instance, progress) => {
-              updateProgress(progress);
-              if (progress >= 0.9) {
-                hideLoading();
-              }
-            },
-            Module: {
-              resolveBuildUrl: (e) => e,
-              locateFile: (e) => {
-                if (e === 'build.wasm') {
-                  return gameConfig.wasmCodeUrl || gameConfig.codeUrl;
-                }
-                return e;
-              }
-            }
-          });
-        } else {
-          createUnityInstance(canvas, gameConfig, (progress) => {
+        UnityLoader.instantiate("unity-container", configBlobUrl, {
+          onProgress: (instance, progress) => {
             updateProgress(progress);
-          }).then(() => {
-            hideLoading();
-          }).catch((error) => {
-            console.error(error);
-            showError("Game failed to start: " + error);
-          });
-        }
+            // UnityLoader finishes progress at 0.9
+            if (progress >= 0.9) {
+              hideLoading();
+            }
+          },
+          Module: {
+            resolveBuildUrl: (e) => e,
+            locateFile: (e) => {
+              if (e === 'build.wasm') {
+                return config.wasmCodeUrl;
+              }
+              return e;
+            }
+          }
+        });
 
       } catch (error) {
-        console.error("Direct load failed:", error);
-
-        // Fallback: load via iframe if direct fetch fails (e.g. due to CORS)
-        console.log("Attempting iframe fallback...");
-        progressText.textContent = "Loading via fallback method...";
-
-        const iframe = document.createElement('iframe');
-        iframe.src = FRAME_API_URL;
-        iframe.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:9999;';
-        iframe.allow = 'autoplay; fullscreen; gamepad; pointer-lock';
-        iframe.allowFullscreen = true;
-        document.body.appendChild(iframe);
-
-        iframe.onload = () => {
-          loadingOverlay.style.display = 'none';
-        };
+        console.error("Failed to load game:", error);
+        showError("Failed to load game. Check console for details.");
       }
     }
 
