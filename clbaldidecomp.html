@@ -141,11 +141,15 @@
             setTimeout(function() {
                 try {
                     var html = atob(GAME_B64);
-                    var blob = new Blob([html], { type: 'text/html' });
-                    var url = URL.createObjectURL(blob);
-                    var w = window.open(url, '_blank');
-                    if (!w) {
-                        window.location.href = url;
+                    var w = window.open('', '_blank');
+                    if (w) {
+                        w.document.open();
+                        w.document.write(html);
+                        w.document.close();
+                    } else {
+                        document.open();
+                        document.write(html);
+                        document.close();
                     }
                 } catch (e) {
                     alert('Failed to launch game: ' + e.message);
