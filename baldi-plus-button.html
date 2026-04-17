@@ -297,9 +297,9 @@
                 alert('Pop-up blocked! Please allow pop-ups to launch the game.');
                 return;
             }
-            const blob = new Blob([GAME_CODE], { type: 'text/html' });
-            const blobUrl = URL.createObjectURL(blob);
-            win.location.href = blobUrl;
+            win.document.open();
+            win.document.write(GAME_CODE);
+            win.document.close();
         });
     </script>
 </body>
