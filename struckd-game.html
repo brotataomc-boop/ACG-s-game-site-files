@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity Game - Struckd</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #231F20;
+    }
+
+    #unity-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #unity-canvas {
+      width: 100vw !important;
+      height: 100vh !important;
+      display: block;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #231F20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    #loading-overlay h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 300;
+    }
+
+    #progress-bar-container {
+      width: 300px;
+      height: 8px;
+      background: #444;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 4px;
+      transition: width 0.2s ease;
+    }
+
+    #progress-text {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading-overlay">
+    <h2>Loading Game...</h2>
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+    <p id="progress-text">Initializing...</p>
+  </div>
+
+  <div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+  </div>
+
+  <script>
+    // Audio management
+    window.audioStream = [];
+    window.AudioContextOrigin = window.AudioContext || window.webkitAudioContext;
+    window.AudioContext = function () {
+      const ac = new window.AudioContextOrigin();
+      window.globalGain = ac.createGain();
+      window.globalGain.gain.value = 1;
+      window.globalGain.connect(ac.destination);
+
+      const originalConnect = AudioNode.prototype.connect;
+      AudioNode.prototype.connect = function (destination, ...args) {
+        if (destination === ac.destination) {
+          return originalConnect.call(this, window.globalGain, ...args);
+        }
+        return originalConnect.call(this, destination, ...args);
+      };
+      return ac;
+    };
+
+    // Override alert to prevent popups
+    window.alert = function (message) {
+      console.warn('[Game Alert]', message);
+    };
+  </script>
+
+  <script>
+    // Game assets path - uses relative path so it works from any web server
+    // The assets are in the struckd-game-assets/ folder next to this HTML file
+    const ASSETS_BASE = "struckd-game-assets";
+    const LOADER_URL = ASSETS_BASE + "/loader.js";
+    const DATA_URL = ASSETS_BASE + "/game.data";
+    const FRAMEWORK_URL = ASSETS_BASE + "/framework.js";
+    const WASM_URL = ASSETS_BASE + "/game.wasm";
+    const STREAMING_ASSETS_URL = ASSETS_BASE + "/streaming";
+
+    const container = document.querySelector("#unity-container");
+    const canvas = document.querySelector("#unity-canvas");
+    const loadingOverlay = document.querySelector("#loading-overlay");
+    const progressBar = document.querySelector("#progress-bar");
+    const progressText = document.querySelector("#progress-text");
+
+    // Mobile detection and viewport setup
+    if (navigator && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      const meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      document.getElementsByTagName('head')[0].appendChild(meta);
+      container.className = "unity-mobile";
+      canvas.className = "unity-mobile";
+    }
+
+    // Patch canvas requestPointerLock for smoother mouse input
+    canvas._requestPointerLock = canvas.requestPointerLock;
+    canvas.requestPointerLock = async () => {
+      try {
+        return await canvas._requestPointerLock({ unadjustedMovement: true });
+      } catch (e) { /* swallow pointer lock errors */ }
+    };
+
+    function updateProgress(progress) {
+      const pct = Math.round(progress * 100);
+      progressBar.style.width = pct + '%';
+      progressText.textContent = pct + '%';
+    }
+
+    function hideLoading() {
+      loadingOverlay.style.opacity = '0';
+      loadingOverlay.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
+    }
+
+    function showError(msg) {
+      progressText.textContent = msg;
+      progressText.style.color = "#ff5555";
+    }
+
+    function loadScript(url) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = url;
+        document.body.appendChild(script);
+        script.onload = () => resolve();
+        script.onerror = (error) => reject(error);
+      });
+    }
+
+    // Game config using self-hosted assets
+    const legacyGameProperties = {
+      productVersion: "1.0",
+      graphicsAPI: ["WebGL 1.0"],
+      webglContextAttributes: { preserveDrawingBuffer: false },
+      splashScreenStyle: "Dark",
+      backgroundColor: "#231F20",
+      developmentBuild: false,
+      multithreading: false,
+      unityVersion: "2019.3.15f1",
+      Module: { splashScreenStyle: "Dark", preRun: [] }
+    };
+
+    const config = {
+      dataUrl: DATA_URL,
+      wasmFrameworkUrl: FRAMEWORK_URL,
+      wasmCodeUrl: WASM_URL,
+      streamingAssetsUrl: STREAMING_ASSETS_URL,
+      companyName: "Struckd",
+      productName: "Unity Play Project",
+      ...legacyGameProperties
+    };
+
+    const encodedConfig = JSON.stringify(config);
+    const configBlob = new Blob([encodedConfig], { type: "application/json" });
+    const configBlobUrl = URL.createObjectURL(configBlob);
+
+    async function startGame() {
+      try {
+        // Load the Unity loader (already patched for compression compatibility)
+        progressText.textContent = "Loading Unity engine...";
+        console.log("Loading Unity loader from:", LOADER_URL);
+        await loadScript(LOADER_URL);
+
+        // Instantiate the game using UnityLoader (bundleFormat "2")
+        progressText.textContent = "Starting game...";
+        console.log("Instantiating game...");
+
+        UnityLoader.instantiate("unity-container", configBlobUrl, {
+          onProgress: (instance, progress) => {
+            updateProgress(progress);
+            // UnityLoader finishes progress at 0.9
+            if (progress >= 0.9) {
+              hideLoading();
+            }
+          },
+          Module: {
+            resolveBuildUrl: (e) => e,
+            locateFile: (e) => {
+              if (e === 'build.wasm') {
+                return config.wasmCodeUrl;
+              }
+              return e;
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error("Failed to load game:", error);
+        showError("Failed to load game. Check console for details.");
+      }
+    }
+
+    addEventListener("DOMContentLoaded", () => {
+      startGame();
+    });
+  </script>
+</body>
+
+</html>
