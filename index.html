@@ -114,21 +114,81 @@
         async function launchGame(file) {
             var statusEl = document.getElementById('status');
             statusEl.textContent = 'Loading game...';
+
+            var win;
             try {
-                var win = window.open('about:blank', '_blank');
-                if (!win) {
-                    statusEl.textContent = 'Pop-up blocked! Please allow pop-ups to launch games.';
+                win = window.open('about:blank', '_blank');
+            } catch (popupErr) {
+                console.error('[launchGame] Failed to open new window for "' + file + '":', popupErr);
+                statusEl.textContent = 'Error: Could not open a new window. Your browser may be blocking pop-ups.';
+                return;
+            }
+
+            if (!win) {
+                console.warn('[launchGame] Pop-up blocked for "' + file + '". window.open returned null.');
+                statusEl.textContent = 'Pop-up blocked! Please allow pop-ups for this site to launch games.';
+                return;
+            }
+
+            try {
+                var response = await fetch(file);
+
+                if (!response.ok) {
+                    var errorDetail = 'HTTP ' + response.status + ' ' + response.statusText;
+                    console.error('[launchGame] Fetch failed for "' + file + '": ' + errorDetail);
+
+                    if (response.status === 404) {
+                        statusEl.textContent = 'Error: Game file "' + decodeURIComponent(file) + '" was not found (404). It may have been moved or deleted.';
+                    } else if (response.status === 403) {
+                        statusEl.textContent = 'Error: Access denied to game file (403 Forbidden). You may not have permission to load this game.';
+                    } else if (response.status === 500) {
+                        statusEl.textContent = 'Error: The server encountered an internal error (500) while loading the game. Please try again later.';
+                    } else if (response.status >= 400 && response.status < 500) {
+                        statusEl.textContent = 'Error: Client error (' + errorDetail + ') while loading "' + decodeURIComponent(file) + '".';
+                    } else if (response.status >= 500) {
+                        statusEl.textContent = 'Error: Server error (' + errorDetail + '). Please try again later.';
+                    } else {
+                        statusEl.textContent = 'Error: Unexpected response (' + errorDetail + ') while loading the game.';
+                    }
+
+                    win.close();
                     return;
                 }
-                var response = await fetch(file);
-                if (!response.ok) throw new Error('Failed to load game');
+
                 var html = await response.text();
+
+                if (!html || html.trim().length === 0) {
+                    console.error('[launchGame] Empty response body for "' + file + '".');
+                    statusEl.textContent = 'Error: Game file "' + decodeURIComponent(file) + '" is empty. The file may be corrupted.';
+                    win.close();
+                    return;
+                }
+
                 var blob = new Blob([html], { type: 'text/html' });
                 var blobUrl = URL.createObjectURL(blob);
                 win.location.href = blobUrl;
                 statusEl.textContent = '';
+                console.log('[launchGame] Successfully launched "' + decodeURIComponent(file) + '".');
+
             } catch (err) {
-                statusEl.textContent = 'Error loading game: ' + err.message;
+                console.error('[launchGame] Error loading "' + file + '":', err);
+
+                var userMessage;
+                if (err instanceof TypeError && err.message === 'Failed to fetch') {
+                    userMessage = 'Error: Network failure while loading the game. Please check your internet connection and try again.';
+                } else if (err.name === 'AbortError') {
+                    userMessage = 'Error: The game request was aborted. Please try again.';
+                } else if (err.name === 'TypeError') {
+                    userMessage = 'Error: A network or CORS issue prevented loading the game (' + err.message + ').';
+                } else {
+                    userMessage = 'Error loading game: ' + err.message;
+                }
+
+                statusEl.textContent = userMessage;
+
+                if (win && !win.closed) {
+                    win.close();
+                }
             }
         }
     </script>
