@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Baldi's Basics Plus Launcher</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Comic Sans MS', 'Segoe UI', Helvetica, Arial, sans-serif;
+            color: #1a1a1a;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 235, 120, 0.35), transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(82, 160, 60, 0.35), transparent 55%),
+                linear-gradient(135deg, #0a3d1f 0%, #14663a 45%, #52a03c 100%);
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,0.04) 0px,
+                    rgba(255,255,255,0.04) 2px,
+                    transparent 2px,
+                    transparent 40px
+                ),
+                radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+            pointer-events: none;
+        }
+        .card {
+            position: relative;
+            text-align: center;
+            padding: 44px 64px;
+            border-radius: 22px;
+            background: rgba(255, 245, 200, 0.92);
+            border: 4px solid #1a1a1a;
+            box-shadow:
+                0 22px 65px rgba(0, 0, 0, 0.55),
+                inset 0 0 0 2px #fffbe0;
+        }
+        h1 {
+            margin: 0 0 8px;
+            font-size: 54px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1;
+            color: #b91c1c;
+            text-shadow:
+                2px 2px 0 #1a1a1a,
+                4px 4px 0 rgba(0,0,0,0.25);
+            transform: rotate(-2deg);
+        }
+        p.subtitle {
+            margin: 6px 0 34px;
+            font-size: 16px;
+            font-style: italic;
+            color: #374151;
+        }
+        .btn {
+            position: relative;
+            display: inline-block;
+            padding: 18px 56px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #ffe066 0%, #f59e0b 100%);
+            border: 3px solid #1a1a1a;
+            border-radius: 14px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow:
+                0 8px 0 #1a1a1a,
+                0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #fff0a1 0%, #fbbf24 100%);
+            box-shadow:
+                0 10px 0 #1a1a1a,
+                0 14px 40px rgba(0, 0, 0, 0.45);
+        }
+        .btn:hover::before { left: 125%; }
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow:
+                0 2px 0 #1a1a1a,
+                0 4px 18px rgba(0, 0, 0, 0.35);
+        }
+        .hint {
+            margin-top: 22px;
+            font-size: 12px;
+            color: #374151;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>BALDI'S BASICS PLUS</h1>
+        <p class="subtitle">Solve math. Survive school. Avoid the ruler.</p>
+        <button class="btn" id="launchBtn">Play Now</button>
+        <div class="hint">Opens in a new tab &middot; ~315 MB download</div>
+    </div>
+
+    <script>
+        const GAME_CODE = `<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <base href="https://cdn.jsdelivr.net/gh/genizy/web-port@latest/baldi-plus/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Baldi's Basics Plus</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+        <div
+      id="loading-text"
+      style="
+        color: black;
+        font-size: 48px;
+        font-family: cursive;
+        text-align: center;
+        margin-top: 20px;
+      "
+    >
+      LOADING...
+    </div>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=960 height=600></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
+
+      <script>
+      const loadingText = document.querySelector("#loading-text");
+      let totalBytes = 315673804.8;
+      let loadedBytes = 0;
+
+      function formatSize(bytes) {
+        if (bytes > 1024 * 1024 * 1024) {
+          return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+        } else if (bytes > 1024 * 1024) {
+          return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+        } else if (bytes > 1024) {
+          return (bytes / 1024).toFixed(2) + " KB";
+        } else {
+          return bytes + " B";
+        }
+      }
+      async function fetchWithProgress(url) {
+        const response = await fetch(url);
+        const reader = response.body.getReader();
+        let chunks = [];
+        let received = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          received += value.length;
+          loadedBytes += value.length;
+          chunks.push(value);
+          const doneText = formatSize(loadedBytes);
+          const totalText = formatSize(totalBytes);
+          const percent =
+            totalBytes > 0
+              ? ((loadedBytes / totalBytes) * 100).toFixed(1)
+              : "?";
+          loadingText.textContent = \`LOADING... \${doneText} / \${totalText} (\${percent}%)\`;
+        }
+        let fullBuffer = new Uint8Array(received);
+        let offset = 0;
+        for (let chunk of chunks) {
+          fullBuffer.set(chunk, offset);
+          offset += chunk.length;
+        }
+        return fullBuffer.buffer;
+      }
+      async function mergeFiles(parts) {
+        const buffers = await Promise.all(parts.map(fetchWithProgress));
+        return URL.createObjectURL(new Blob(buffers));
+      }
+
+      function getParts(file, count) {
+        let parts = [];
+        for (let i = 1; i <= count; i++) {
+          parts.push(file + ".part" + i);
+        }
+        return parts;
+      }
+      (async () => {
+        const dataParts = getParts("Build/BaldiPlusNew.data", 5);
+        const wasmParts = getParts("Build/BaldiPlusNew.wasm", 2);
+        const allParts = [...dataParts, ...wasmParts];
+        const [dataUrl, wasmUrl] = await Promise.all([
+          mergeFiles(dataParts),
+          mergeFiles(wasmParts),
+        ]);
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector(
+          "#unity-progress-bar-full"
+        );
+        var warningBanner = document.querySelector("#unity-warning");
+
+        // Shows a temporary message banner/ribbon for a few seconds, or
+        // a permanent error message on top of the canvas if type=='error'.
+        // If type=='warning', a yellow highlight color is used.
+        // Modify or remove this function to customize the visually presented
+        // way that non-critical warnings and error messages are presented to the
+        // user.
+        function unityShowBanner(msg, type) {}
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/BaldiPlusNew.loader.js";
+      var config = {
+        dataUrl: dataUrl,
+        frameworkUrl: buildUrl + "/BaldiPlusNew.framework.js",
+        codeUrl: wasmUrl,
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Basically Games",
+        productName: "Baldi's Basics Plus",
+        productVersion: "0.12.2a",
+        showBanner: unityShowBanner,
+      };
+
+        // By default Unity keeps WebGL canvas render target size matched with
+        // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+        // Set this to false if you want to decouple this synchronization from
+        // happening inside the engine, and you would instead like to size up
+        // the canvas DOM size and WebGL render target sizes yourself.
+        // config.matchWebGLToCanvasSize = false;
+
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          // Mobile device style: fill the whole browser client area with the game canvas:
+          var meta = document.createElement("meta");
+          meta.name = "viewport";
+          meta.content =
+            "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+          document.getElementsByTagName("head")[0].appendChild(meta);
+        }
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+            progressBarFull.style.width = 100 * progress + "%";
+          })
+            .then((unityInstance) => {
+              loadingText.remove();
+              loadingBar.style.display = "none";
+            })
+            .catch((message) => {
+              alert(message);
+            });
+        };
+        document.body.appendChild(script);
+      })();
+    </\script>
+  </body>
+</html>
+`;
+
+        document.getElementById('launchBtn').addEventListener('click', () => {
+            const win = window.open('about:blank', '_blank');
+            if (!win) {
+                alert('Pop-up blocked! Please allow pop-ups to launch the game.');
+                return;
+            }
+            win.document.open();
+            win.document.write(GAME_CODE);
+            win.document.close();
+        });
+    </script>
+</body>
+</html>
